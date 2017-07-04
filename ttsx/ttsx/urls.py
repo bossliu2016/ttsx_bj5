@@ -18,4 +18,9 @@ from django.contrib import admin
 
 urlpatterns = [
     url(r'^admin/', include(admin.site.urls)),
+<<<<<<< Updated upstream
+=======
+    # url('^',include('booktest.urls')),
+    # url('^user/',include('df_user.urls')),
+>>>>>>> Stashed changes
 ]
