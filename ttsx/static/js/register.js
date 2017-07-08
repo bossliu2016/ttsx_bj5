@@ -48,17 +48,32 @@ $(function(){
 		}
 		else
 		{
-			$.get('/user/register_valid/',{'uname':$('#user_name').val()},function (data) {
-				if(data.valid>=1){
-					//用户名不可用
-					$('#user_name').next().html('用户名已经存在').show();
-					error_name = true;
-				}else{
-					//用户名可用
-					$('#user_name').next().hide();
-					error_name = false;
-				}
+			$.post('/user/register_valid/',
+				{'uname':$('#user_name').val(),'csrfmiddlewaretoken':$('input:first').val()},
+				function (data) {
+					if(data.valid>=1){
+						//用户名不可用
+						$('#user_name').next().html('用户名已经存在').show();
+						error_name = true;
+					}else{
+						//用户名可用
+						$('#user_name').next().hide();
+						error_name = false;
+					}
             });
+            // $.get('/user/register_valid/',
+				// {'uname':$('#user_name').val()},
+				// function (data) {
+				// if(data.valid>=1){
+				// 	//用户名不可用
+				// 	$('#user_name').next().html('用户名已经存在').show();
+				// 	error_name = true;
+				// }else{
+				// 	//用户名可用
+				// 	$('#user_name').next().hide();
+				// 	error_name = false;
+				// }
+            // });
 		}
 	}
 

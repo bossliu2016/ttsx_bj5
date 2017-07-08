@@ -4,6 +4,7 @@ from django.http import JsonResponse
 from models import UserInfo
 from hashlib import sha1
 import datetime
+import user_decorators
 # Create your views here.
 def register(request):
     context={'title':'注册','top':'0'}
@@ -29,7 +30,8 @@ def register_handle(request):
     return redirect('/user/login/')
 def register_valid(request):
     #接收用户名
-    uname=request.GET.get('uname')
+    # uname=request.GET.get('uname')
+    uname=request.POST.get('uname')
     #查询当前用户的个数
     data=UserInfo.objects.filter(uname=uname).count()
     #返回json{'valid':1或0}
@@ -61,8 +63,9 @@ def login_handle(request):
     else:
         if result[0].upwd==upwd_sha1:
             #登录成功
-            response = redirect('/user/')
+            response = redirect(request.session.get('url_path','/'))
             request.session['uid']=result[0].id
+            request.session['uname']=result[0].uname
             #记住用户名
             if ujz=='1':
                 response.set_cookie('uname',uname,expires=datetime.datetime.now() + datetime.timedelta(days = 14))
@@ -74,13 +77,22 @@ def login_handle(request):
             context['error_pwd']='密码错误'
             return render(request, 'ttsx_user/login.html', context)
 
+
+def logout(request):
+    request.session.flush()
+    return redirect('/user/login/')
+
+@user_decorators.user_islogin
 def center(request):
     user=UserInfo.objects.get(pk=request.session['uid'])
     context={'user':user}
     return render(request,'ttsx_user/center.html',context)
+@user_decorators.user_islogin
 def order(request):
+
     context={}
     return render(request,'ttsx_user/order.html',context)
+@user_decorators.user_islogin
 def site(request):
     user = UserInfo.objects.get(pk=request.session['uid'])
     if request.method=='POST':#post请求，修改当前用户对象的收货信息
