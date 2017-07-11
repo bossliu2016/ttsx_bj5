@@ -78,20 +78,26 @@ def login_handle(request):
             context['error_pwd']='密码错误'
             return render(request, 'ttsx_user/login.html', context)
 
-
 def logout(request):
     request.session.flush()
     return redirect('/user/login/')
+
+def islogin(request):
+    result=0
+    if request.session.has_key('uid'):
+        result=1
+    return JsonResponse({'islogin':result})
 
 @user_decorators.user_islogin
 def center(request):
     #查询当前登录的用户对象
     user=UserInfo.objects.get(pk=request.session['uid'])
     #查询最近浏览
-    ids=request.COOKIES.get('goods_ids','').split(',')[:-1]#[3,1,2]
+    ids=request.COOKIES.get('goods_ids','').split(',')#[3,1,2]
     glist=[]
     for id in ids:
-        glist.append(GoodsInfo.objects.get(id=id))
+        if id!='':
+            glist.append(GoodsInfo.objects.get(id=id))
     context={'user':user,'glist':glist}
     return render(request,'ttsx_user/center.html',context)
 @user_decorators.user_islogin

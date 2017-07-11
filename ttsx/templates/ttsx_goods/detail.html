@@ -3,23 +3,39 @@
 {%block head%}
 	<script type="text/javascript">
 		$(function () {
-			$('#add_cart').click(function(){
-			    var $add_x = $('#add_cart').offset().top;
-				var $add_y = $('#add_cart').offset().left;
+		    $('#add_cart').click(function () {
+		        gid=$('#gid').val();
+		        count=$('.num_show').val();
+		        //判断是否登录
+		        $.get('/user/islogin/',function (data) {
+					if(data.islogin){//如果登录则添加
+						$.get('/cart/add',{'gid':gid,'count':count},function (data) {
+							if(data.isadd){
+								var $add_x = $('#add_cart').offset().top;
+								var $add_y = $('#add_cart').offset().left;
 
-				var $to_x = $('#show_count').offset().top;
-				var $to_y = $('#show_count').offset().left;
+								var $to_x = $('#show_count').offset().top;
+								var $to_y = $('#show_count').offset().left;
 
-				$(".add_jump").css({'left':$add_y+80,'top':$add_x+10,'display':'block'})
-					$(".add_jump").stop().animate({
-						'left': $to_y+7,
-						'top': $to_x+7},
-						"fast", function() {
-							$(".add_jump").fadeOut('fast',function(){
-								$('#show_count').html(2);
-							});
-					});
-				})
+								$(".add_jump").css({'left':$add_y+80,'top':$add_x+10,'display':'block'});
+								$(".add_jump").stop().animate({'left': $to_y+7, 'top': $to_x+7}, "fast", function() {
+									$(".add_jump").fadeOut('fast',function(){
+									    $.get('/cart/count/',function (data) {
+											$('#show_count').html(data.count);
+                                        });
+									});
+								});
+							}else{
+							    alert('购买失败，请稍候重试');
+							}
+                        });
+					}else{//如果未登录则转到登录页
+					    location.href='/user/login/';
+					}
+                });
+
+
+            });
 
 			//改变数量
 			$('.num_show').blur(function () {
@@ -75,6 +91,7 @@
 			<div class="goods_num clearfix">
 				<div class="num_name fl">数 量：</div>
 				<div class="num_add fl">
+					<input type="hidden" id="gid" value="{{goods.id}}">
 					<input type="text" class="num_show fl" value="1">
 					<input type="hidden" id="kucun" value="{{goods.gkucun}}">
 					<a href="javascript:;" class="add fr">+</a>

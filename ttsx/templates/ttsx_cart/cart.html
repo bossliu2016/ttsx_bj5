@@ -1,0 +1,62 @@
+{%extends 'base.html'%}
+
+{%block head%}
+<script>
+	function total() {
+	    total_all=0;
+	    $('.cart_list_td').each(function () {
+			price=parseFloat($(this).children('.col05').text());
+			count=parseInt($(this).find('.num_show').val());
+			total_one=price*count;
+			total_all+=total_one;
+			$(this).children('.col07').text(total_one.toFixed(2)+'元');
+        });
+	    $('#total_all').text(total_all.toFixed(2));
+	    count=$('.cart_list_td').length
+	    $('.total_count em').text(count);
+	    $('.settlements b').text(count);
+    }
+
+	$(function () {
+		total();
+    });
+</script>
+{%endblock head%}
+
+{%block body%}
+	<div class="total_count">全部商品<em>2</em>件</div>	
+	<ul class="cart_list_th clearfix">
+		<li class="col01">商品名称</li>
+		<li class="col02">商品单位</li>
+		<li class="col03">商品价格</li>
+		<li class="col04">数量</li>
+		<li class="col05">小计</li>
+		<li class="col06">操作</li>
+	</ul>
+
+	{%for cart in cart_list%}
+	<ul class="cart_list_td clearfix">
+		<li class="col01"><input type="checkbox" name="" checked></li>
+		<li class="col02"><img src="/static/{{cart.goods.gpic}}"></li>
+		<li class="col03">{{cart.goods.gtitle}}<br><em>库存：{{cart.goods.gkucun}}</em></li>
+		<li class="col04">{{cart.goods.gunit}}</li>
+		<li class="col05">{{cart.goods.gprice}}</li>
+		<li class="col06">
+			<div class="num_add">
+				<a href="javascript:;" class="add fl">+</a>
+				<input type="text" class="num_show fl" value="{{cart.count}}">
+				<a href="javascript:;" class="minus fl">-</a>	
+			</div>
+		</li>
+		<li class="col07">元</li>
+		<li class="col08"><a href="javascript:;">删除</a></li>
+	</ul>
+	{%endfor%}
+
+	<ul class="settlements">
+		<li class="col01"><input type="checkbox" name="" checked=""></li>
+		<li class="col02">全选</li>
+		<li class="col03">合计(不含运费)：<span>¥</span><em id="total_all">42.60</em><br>共计<b>2</b>件商品</li>
+		<li class="col04"><a href="../place_order.html">去结算</a></li>
+	</ul>
+{%endblock body%}

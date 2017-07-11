@@ -1,5 +1,7 @@
 from django.conf.urls import url
 import views
 urlpatterns=[
-    # url('^$',)
+    url('^$',views.index),
+    url('^add/$',views.add),
+    url('^count/$',views.count),
 ]
