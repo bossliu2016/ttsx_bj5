@@ -9,7 +9,7 @@
 		        //判断是否登录
 		        $.get('/user/islogin/',function (data) {
 					if(data.islogin){//如果登录则添加
-						$.get('/cart/add',{'gid':gid,'count':count},function (data) {
+						$.get('/cart/add/',{'gid':gid,'count':count},function (data) {
 							if(data.isadd){
 								var $add_x = $('#add_cart').offset().top;
 								var $add_y = $('#add_cart').offset().left;
