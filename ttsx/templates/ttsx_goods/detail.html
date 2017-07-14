@@ -10,7 +10,7 @@
 		        $.get('/user/islogin/',function (data) {
 					if(data.islogin){//如果登录则添加
 						$.get('/cart/add/',{'gid':gid,'count':count},function (data) {
-							if(data.isadd){
+							if(data.isadd==1){
 								var $add_x = $('#add_cart').offset().top;
 								var $add_y = $('#add_cart').offset().left;
 
@@ -25,9 +25,11 @@
                                         });
 									});
 								});
-							}else{
+							}else if(data.isadd==0){
 							    alert('购买失败，请稍候重试');
-							}
+							}else if(data.isadd==2){
+							    alert('库存不足，请与客服联系');
+                            }
                         });
 					}else{//如果未登录则转到登录页
 					    location.href='/user/login/';

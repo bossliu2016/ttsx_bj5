@@ -16,7 +16,10 @@ def add(request):
         cart=CartInfo.objects.filter(user_id=uid,goods_id=gid)
         if len(cart)==1:#如果用户uid已经购买了商品gid，则将数量+count
             cart1=cart[0]
-            cart1.count+=count
+            if cart1.goods.gkucun<cart1.count+count:
+                return JsonResponse({'isadd':2})
+            else:
+                cart1.count+=count
             cart1.save()
         else:#用户uid没有购买gid过商品则添加
             cart=CartInfo()
@@ -57,7 +60,7 @@ def index(request):
 
 def order(request):
     user=UserInfo.objects.get(pk=request.session.get('uid'))
-
-    cart_list=CartInfo.objects.filter(id__in=request.POST.getlist('cart_id'))
-    context={'title':'提交订单','user':user,'cart_list':cart_list}
+    cart_ids= request.POST.getlist('cart_id')
+    cart_list=CartInfo.objects.filter(id__in=cart_ids)
+    context={'title':'提交订单','user':user,'cart_list':cart_list,'cart_ids':'.'.join(cart_ids)}
     return render(request,'ttsx_cart/order.html',context)

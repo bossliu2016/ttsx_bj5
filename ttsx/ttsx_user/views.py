@@ -6,6 +6,8 @@ from hashlib import sha1
 import datetime
 import user_decorators
 from ttsx_goods.models import GoodsInfo
+from ttsx_order.models import OrderMain
+from django.core.paginator import Paginator
 # Create your views here.
 def register(request):
     context={'title':'注册','top':'0'}
@@ -102,8 +104,24 @@ def center(request):
     return render(request,'ttsx_user/center.html',context)
 @user_decorators.user_islogin
 def order(request):
+    #查询当前登录用户的订单并分页
+    order_list=OrderMain.objects.filter(user_id=request.session.get('uid'))
+    paginator=Paginator(order_list,3)
+    pindex=int(request.GET.get('pindex','1'))
+    page=paginator.page(pindex)
 
-    context={}
+    #分页页码
+    page_list=[]
+    if paginator.num_pages<5:
+        page_list=paginator.page_range
+    elif pindex<=2:
+        page_list=range(1,6)
+    elif pindex>=paginator.num_pages-1:# 6 7 8   9 10
+        page_list=range(paginator.num_pages-4,paginator.num_pages+1)
+    else:
+        page_list=range(pindex-2,pindex+3)
+
+    context={'title':'用户订单','order_page':page,'page_list':page_list}
     return render(request,'ttsx_user/order.html',context)
 @user_decorators.user_islogin
 def site(request):
